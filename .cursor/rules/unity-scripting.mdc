@@ -1,0 +1,31 @@
+---
+description: U2610 Unity 脚本写法：生命周期、引用缓存、事件订阅、物理与输入
+globs: **/*.cs
+alwaysApply: true
+---
+
+# Unity 脚本写法
+
+## 引用与查找
+
+- 组件引用在 `Awake` 中获取并存进字段，或用 `[SerializeField]` 在 Inspector 拖拽。
+- `Update`、`FixedUpdate`、`LateUpdate` 中不调用 `GetComponent`、`FindObjectOfType`、`FindAnyObjectByType`、`GameObject.Find`，也不 `new` 引用类型对象。
+- 不用 `SendMessage`、`BroadcastMessage`；改用直接引用、C# 事件或接口。
+
+## 生命周期
+
+- `Awake` 初始化自身，`Start` 访问其他对象。不依赖不同对象之间 `Awake` 的执行顺序。
+- 事件订阅在 `OnEnable` 中注册，在 `OnDisable` 中注销，必须成对出现。
+- 协程或异步任务在对象禁用或销毁时停止，不在已销毁对象上继续执行。
+
+## 物理与时间
+
+- 修改 `Rigidbody` / `Rigidbody2D` 的速度或施加力放在 `FixedUpdate`，使用 `Time.fixedDeltaTime`。
+- 非物理的逐帧移动乘以 `Time.deltaTime`。需要不受暂停与顿帧影响的计时用 `Time.unscaledDeltaTime`。
+- 射线与重叠检测指定 LayerMask，不对全部层检测。
+
+## 输入
+
+- 只用 Input System 包（`UnityEngine.InputSystem`），动作定义在 `Assets/Input/` 的 `.inputactions`。
+- 不使用旧版 `Input.GetKey`、`Input.GetAxis`、`Input.GetMouseButton`。
+- 读取输入的代码放在 `U2610.Client`，把结果以方法调用或数据传给角色逻辑，角色逻辑不直接读设备。

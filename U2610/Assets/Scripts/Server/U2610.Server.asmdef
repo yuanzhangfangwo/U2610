@@ -1,0 +1,16 @@
+{
+    "name": "U2610.Server",
+    "rootNamespace": "U2610.Server",
+    "references": [
+        "U2610.Tool"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

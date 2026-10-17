@@ -1,0 +1,42 @@
+---
+description: U2610 C# 代码风格、命名空间与程序集引用方向、禁止魔法数字
+globs: **/*.cs
+alwaysApply: true
+---
+
+# C# 代码风格
+
+完整说明见 `U2610/Docs/代码与协作规范.md`。
+
+## 编码与格式
+
+- `.cs` 用 UTF-8 保存，4 空格缩进，大括号另起一行，遵守 `U2610/.editorconfig`。
+- 一个文件只放一个公开类型，文件名与类型名一致，类型名用英文 PascalCase。
+- 公开成员、属性、方法、常量用 PascalCase；私有字段、参数、局部变量用 camelCase，不加下划线前缀。
+- 需要在 Inspector 调整的字段写 `[SerializeField] private`，不为显示而写 `public` 字段。对外读取用只读属性。
+
+## 命名空间与程序集
+
+- 脚本只放在 `Assets/Scripts/Client/`、`Server/`、`Tool/`、`Editor/` 及其子目录，不在 `Assets/Scripts/` 根目录放脚本。
+- 命名空间与目录对应：`Scripts/Client/Combat/` → `U2610.Client.Combat`。
+- 程序集引用方向固定，不得在 `.asmdef` 里新增反向引用：
+  - `U2610.Tool` 不引用项目内其他程序集。
+  - `U2610.Server` 只引用 `U2610.Tool`。
+  - `U2610.Client` 引用 `U2610.Tool` 与 Unity 包，不引用 `U2610.Server`。
+  - `U2610.Editor` 仅编辑器，可引用以上全部。
+- `Client` 与 `Server` 需要通信时，把接口、事件或数据结构放在 `Tool`。
+
+## 禁止魔法数字
+
+- 逻辑里不出现无名数字或字符串。`0`、`1`、`-1` 用于计数和索引时例外。
+- 设计师会调的数值（速度、伤害、前后摇、冷却）放 `Assets/Data/` 的 ScriptableObject。
+- 固定不变的值写成具名 `const` 或 `static readonly`。
+- Tag、Layer、场景名、Animator 参数集中到 `U2610.Tool` 的常量类，Animator 参数用 `Animator.StringToHash` 缓存。
+
+```csharp
+// ❌
+if (Time.time - lastHitTime > 0.35f) animator.SetTrigger("Hit");
+
+// ✅
+if (Time.time - lastHitTime > config.HitStunDuration) animator.SetTrigger(AnimatorParams.Hit);
+```

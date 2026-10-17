@@ -1,0 +1,17 @@
+---
+description: U2610 单机 Unity 工程的资源目录、命名与 Git 协作约定
+alwaysApply: true
+---
+
+# 资源管理
+
+完整说明见 `U2610/Docs/资源管理约定.md`。新增或移动资源时按下面执行。
+
+- Unity 工程根目录是 `U2610/`。只提交 `Assets/`、`Packages/`、`ProjectSettings/`、`Docs/`。不提交 `Library/`、`Temp/`、`Obj/`、`Logs/`、`UserSettings/`、`Build/`。
+- 资源与对应 `.meta` 必须一起新增、移动或删除。
+- 新资源放进约定目录：美术 `Assets/Art/`，动画 `Assets/Animations/`，音频 `Assets/Audio/`，配置 `Assets/Data/`，输入 `Assets/Input/`，预制体 `Assets/Prefabs/`，场景 `Assets/Scenes/`，脚本 `Assets/Scripts/`，第三方 `Assets/ThirdParty/`。
+- 脚本按职责放进 `Assets/Scripts/Client/`（客户端）、`Server/`（服务器端）、`Tool/`（工具类）、`Editor/`（仅编辑器）。`Tool/` 不引用 `Client/`、`Server/`，`Client/` 与 `Server/` 不直接互相引用。
+- `Assets/Settings/` 只放 URP 管线资源。不要新建 `Assets/Resources/` 堆内容。
+- 命名用英文 PascalCase，并带种类前缀：场景 `SC_`，预制体 `PF_`，材质 `M_`，贴图 `T_`，动画 `A_`，Animator `AC_`，配置 `SO_`，音效 `SFX_`，音乐 `BGM_`。脚本文件名与类名一致。
+- 可调数值放 `Assets/Data/` 的 ScriptableObject。场景只拼装预制体，不把可玩内容直接做在场景里。
+- 同一时间只让一个人改同一个 `.unity` 或共享预制体。

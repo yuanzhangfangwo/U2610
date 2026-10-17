@@ -1,0 +1,69 @@
+---
+description: U2610 C# 脚本的文件头、函数注释与局部变量书写约束，AI 新建或修改脚本时必须遵守
+globs: **/*.cs
+alwaysApply: true
+---
+
+# C# 脚本约束
+
+新建或修改 `U2610/Assets/` 下的 `.cs` 文件时，以下三条必须遵守。
+
+## 1. 文件头注释
+
+每个新建脚本在 `using` 之前加入文件头，包含创作者、创作时间、主要功能、主要 API。
+
+- 创作者：填当前仓库 `git config user.name` 的值，取不到时询问用户。
+- 创作时间：填创建当天的本地时间，格式 `yyyy-MM-dd HH:mm`。
+- 主要 API：列出对外的公开方法、属性或事件，每行一个，附一句用途。
+- 修改已有脚本时不改创作者和创作时间；公开 API 有增删时同步更新文件头。
+
+## 2. 函数注释
+
+每个函数（含构造函数、属性访问器以外的方法、Unity 消息如 `Awake`、`Update`）上方用 `/// <summary>` 写明该函数做什么；有参数或返回值时补 `<param>`、`<returns>`。
+
+## 3. 局部变量放在函数顶部
+
+函数内用到的局部变量统一在函数体开头声明，之后才写逻辑。不在循环、分支中间首次声明变量。`foreach`、`for` 的迭代变量和 `out var` 例外。
+
+## 示例
+
+```csharp
+// ============================================================
+// 创作者：yuanzhangfangwo
+// 创作时间：2026-10-17 17:20
+// 主要功能：处理玩家冲刺的位移与冷却，数值读取自 SO_PlayerDash。
+// 主要 API：
+//   TryDash(Vector3 direction) —— 尝试朝指定方向冲刺，冷却中返回 false
+// ============================================================
+using UnityEngine;
+
+namespace U2610.Client.Characters
+{
+    public class PlayerDash : MonoBehaviour
+    {
+        [SerializeField] private PlayerDashConfig config;
+
+        private float lastDashTime = float.NegativeInfinity;
+
+        /// <summary>尝试朝指定方向冲刺，冷却未结束时不执行。</summary>
+        /// <param name="direction">冲刺方向，会被归一化。</param>
+        /// <returns>是否成功发起冲刺。</returns>
+        public bool TryDash(Vector3 direction)
+        {
+            Vector3 offset;
+            bool isReady;
+
+            isReady = Time.time - lastDashTime >= config.Cooldown;
+            if (!isReady)
+            {
+                return false;
+            }
+
+            offset = direction.normalized * config.Distance;
+            transform.position += offset;
+            lastDashTime = Time.time;
+            return true;
+        }
+    }
+}
+```
